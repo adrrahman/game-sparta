@@ -6,11 +6,8 @@
 :- dynamic(money/1).
 :- dynamic(inven/1).
 
-<<<<<<< HEAD
+
 /*Deklarasi Fakta*/
-=======
-/*Facts*/
->>>>>>> f08be1c225f3e186f9df7733fb967102a481d61a
 inven(pena).
 inven(kertas).
 
