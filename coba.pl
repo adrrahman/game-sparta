@@ -47,6 +47,12 @@ npc(begaler).
 npc_at(mamet,7602).
 npc_at(begaler,lapangan_sipil).
 npc_at(rezsky,dingdong).
+npc_at(enigma-ers,basecamp).
+npc_at(pedagang,toko).
+npc_at(swasta,sekre).
+npc_at(penjaga,vib).
+npc_at(teman,kosan).
+npc_at(domba,kandang_domba). /*npc sementara untuk tes*/
 nama_player(unnamed).
 
 object(slayer).
