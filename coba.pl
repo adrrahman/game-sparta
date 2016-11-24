@@ -6,7 +6,11 @@
 :- dynamic(money/1).
 :- dynamic(inven/1).
 
+<<<<<<< HEAD
 /*Deklarasi Fakta*/
+=======
+/*Facts*/
+>>>>>>> f08be1c225f3e186f9df7733fb967102a481d61a
 inven(pena).
 inven(kertas).
 
@@ -58,6 +62,7 @@ object(bukang).
 object(kertas).
 object(pena).
 
+object_at(slayer,7602).
 object_at(tolak_angin,toko).
 
 poin(0).
@@ -67,13 +72,24 @@ quest(jadi_ketang, undone).
 
 wear(nothing).
 
+
 /*Deklarasi Rules*/
 take(X):-
 	object_at(X,Y),
 	location_now(Y),
 	asserta(inven(X)),
 	write(X),write(' taken'), nl.
+	
+drop(X) :- 
+	inven(X),
+	location_now(Y),
+	asserta(object_at(X,Y)),
+	write(X),write(' dropped'),nl.
 
+use(X) :- 
+	inven(X),
+	wear(X).
+	
 
 tulis_nama_player:-
 	nama_player(X),
@@ -106,42 +122,52 @@ right :-
 	jalan(X,kanan,Y),
 	retract(location_now(X)),
 	asserta(location_now(Y)),
-	write('Berjalan ke kanan......'), nl.
+	write('Berjalan ke kanan......'), nl,
+	cek_location,!.
 left :-
 	location_now(X),
 	jalan(X,kiri,Y),
 	retract(location_now(X)),
 	asserta(location_now(Y)),
-	write('Berjalan ke kiri......'), nl.
+	write('Berjalan ke kiri......'), nl,
+	cek_location,!.
 up :-
 	location_now(X),
 	jalan(X,atas,Y),
 	retract(location_now(X)),
 	asserta(location_now(Y)),
-	write('Berjalan ke atas......'), nl.
+	write('Berjalan ke atas......'), nl,
+	cek_location,!.
 down :- 
 	location_now(X),
-	jalan(X,down,Y),
+	jalan(X,bawah,Y),
 	retract(location_now(X)),
 	asserta(location_now(Y)),
-	write('Berjalan ke bawah......'), nl.
+	write('Berjalan ke bawah......'), nl,
+	cek_location,!.
+
 look :-
 	location_now(X),
-	npc_at(Y,X),
 	write('Kamu sekarang berada di '),
-	write(X), nl,
-	write('Di sini ada '),
-	write(Y), nl,
-	write('. Kamu boleh berbicara dengan mereka').
+	write(X), nl.
 	
+who :- 
+	npc_at(Y,X),
+	write('Di sini ada '),
+	write(Y),
+	write('. Kamu boleh berbicara dengan dia/mereka').
+
 talk(X) :-
+	location_now(Y),
+	npc_at(X,Y),
 	write('Halo, saya '),
-	write(X),
+	write(X), nl,
 	tanya1.
 	
 status :-
 	poin(X),
-	write('Total poinmu sekarang adalah : '), nl.
+	write('Total poinmu sekarang adalah : '), nl,
+	write(X).
 	
 inspect(X):-
 	X==slayer,
@@ -171,5 +197,20 @@ cektanya(bimo):- /*pake cektanya1 gimana?._.*/
 	retract(poin(X)),
 	asserta(poin(Y)),
 	write('jawaban benar'),nl,!.
+
 cektanya(_)	:-
 	write('jawaban kamu salah'),nl.
+
+quit :- 
+	write('nama		: '), tulis_nama_player, nl,
+	write('poin		: '), poin(Y), write(Y), nl,
+	write('status quest'), nl, quest(dilantik,A), quest(jadi_ketang,B),
+	write('dilantik	: '), write(A), nl,
+	write('jadi ketang	: '), write(B), nl,
+	retract(nama_player(X)),
+	asserta(nama_player(unnamed)),
+	retract(poin(Y)),
+	asserta(poin(0)),
+	retract(money(Z)),
+	asserta(money(50000)),
+	write('Terima kasih'), nl.
