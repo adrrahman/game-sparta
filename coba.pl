@@ -8,9 +8,23 @@
 
 
 /*Deklarasi Fakta*/
-inven(pena).
-inven(kertas).
+/*Dynamic Clause*/
+location_now(dingdong).
 
+location_quest(7602).
+
+money(50000).
+
+nama_player(unnamed).
+
+poin(0).
+
+quest(dilantik, undone).
+quest(jadi_ketang, undone).
+
+wear(nothing).
+
+/*Static Clause*/
 jalan(sekre,kanan,7602).
 jalan(7602,kiri,sekre).
 jalan(7602,kanan,dingdong).
@@ -24,9 +38,6 @@ jalan(basecamp,kanan,toko).
 jalan(toko,kiri,basecamp).
 jalan(lapangan_sipil,kiri,dingdong).
 
-location_now(dingdong).
-location_quest(7602).
-
 location(7602).
 location(lapangan_sipil).
 location(dingdong).
@@ -36,8 +47,6 @@ location(toko).
 location(sekre).
 location(vib).
 location(kosan).
-
-money(50000).
 
 npc(rezsky).
 npc(mamet).
@@ -53,7 +62,6 @@ npc_at(swasta,sekre).
 npc_at(penjaga,vib).
 npc_at(teman,kosan).
 npc_at(domba,kandang_domba). /*npc sementara untuk tes*/
-nama_player(unnamed).
 
 object(slayer).
 object(nametag).
@@ -68,35 +76,71 @@ object(pena).
 object_at(slayer,7602).
 object_at(tolak_angin,toko).
 
-poin(0).
-
-quest(dilantik, undone).
-quest(jadi_ketang, undone).
-
-wear(nothing).
-
-
 /*Deklarasi Rules*/
-take(X):-
-	object_at(X,Y),
-	location_now(Y),
-	asserta(inven(X)),
-	write(X),write(' taken'), nl.
-	
+cek(inventory) :-
+	findall(X,inven(X),Inventory),
+	write(Inventory).
+
+cek_location:-
+	location_now(sekre),
+	quest(dilantik,undone),
+	poin(X),
+	Y is X-1,
+	retract(poin(X)),
+	asserta(poin(Y)),
+	write('BOOM!!!, kamu telah memasuki area steril. Kakak tingkat telah diberitahu.'),nl.
+
+/*Direction*/
+right :-
+
+	location_now(X),
+
+	jalan(X,kanan,Y),
+
+	retract(location_now(X)),
+
+	asserta(location_now(Y)),
+
+	write('Berjalan ke kanan......'), nl,
+
+	look,
+
+	cek_location,!.
+left :-
+	location_now(X),
+	jalan(X,kiri,Y),
+	retract(location_now(X)),
+	asserta(location_now(Y)),
+	write('Berjalan ke kiri......'), nl,
+	look,
+	cek_location,!.
+up :-
+	location_now(X),
+	jalan(X,atas,Y),
+	retract(location_now(X)),
+	asserta(location_now(Y)),
+	write('Berjalan ke atas......'), nl,
+	look,
+	cek_location,!.
+down :- 
+	location_now(X),
+	jalan(X,bawah,Y),
+	retract(location_now(X)),
+	asserta(location_now(Y)),
+	write('Berjalan ke bawah......'), nl,
+	look,
+	cek_location,!.
+/*end of direction*/
+
 drop(X) :- 
 	inven(X),
 	location_now(Y),
 	asserta(object_at(X,Y)),
 	write(X),write(' dropped'),nl.
 
-use(X) :- 
-	inven(X),
-	wear(X).
-	
-
-tulis_nama_player:-
-	nama_player(X),
-	write(X).
+inspect(X):-
+	X==slayer,
+	write('Ini menandakan bahwa kamu calon anggota HMIF. Harus selalu dipakai jika berada di itb'), nl.
 
 instructions :-
 	tulis_nama_player,
@@ -111,6 +155,42 @@ instructions :-
 	write('talk					-- berbicara dengan npc'), nl,
 	write('Selamat bersenang-senang! Semoga cepat dilantik, ya!'), nl.
 
+look :-
+	location_now(X),
+	write('Kamu sekarang berada di '),
+	write(X), nl.
+
+quit :- 
+	write('Nama		: '), tulis_nama_player, nl,
+	write('Poin		: '), poin(Y), write(Y), nl,
+	write('Status Quest'), nl,
+	quest(dilantik,A), quest(jadi_ketang,B),
+	write('Dilantik	: '), write(A), nl,
+	write('Jadi ketang : '), write(B), nl,
+	retract(nama_player(X)),
+	asserta(nama_player(unnamed)),
+	retract(poin(Y)),
+	asserta(poin(0)),
+	retract(money(Z)),
+	asserta(money(50000)),
+	write('Terima kasih'), nl.
+
+/*Quiz*/
+tanya1 :-
+	write('siapa kahim hmif: '),
+	read(X), nl,
+	cektanya1(X).
+
+cektanya1(bimo):- /*pake cektanya1 gimana?._.*/
+	poin(X),
+	Y is X+2,
+	retract(poin(X)),
+	asserta(poin(Y)),
+	write('jawaban benar'),nl,!.
+
+cektanya1(_) :-
+	write('jawaban kamu salah'),nl.
+
 start :-
 	write('Selamat datang di Game Petualangan Sparta'), nl,
 	write('Silahkan masukkan namamu (tidak menggunakan huruf kapital): '),
@@ -120,45 +200,16 @@ start :-
 	nl,
 	instructions.
 
-right :-
-	location_now(X),
-	jalan(X,kanan,Y),
-	retract(location_now(X)),
-	asserta(location_now(Y)),
-	write('Berjalan ke kanan......'), nl,
-	cek_location,!.
-left :-
-	location_now(X),
-	jalan(X,kiri,Y),
-	retract(location_now(X)),
-	asserta(location_now(Y)),
-	write('Berjalan ke kiri......'), nl,
-	cek_location,!.
-up :-
-	location_now(X),
-	jalan(X,atas,Y),
-	retract(location_now(X)),
-	asserta(location_now(Y)),
-	write('Berjalan ke atas......'), nl,
-	cek_location,!.
-down :- 
-	location_now(X),
-	jalan(X,bawah,Y),
-	retract(location_now(X)),
-	asserta(location_now(Y)),
-	write('Berjalan ke bawah......'), nl,
-	cek_location,!.
+status :-
+	poin(X),
+	write('Total poinmu sekarang adalah : '), nl,
+	write(X).
 
-look :-
-	location_now(X),
-	write('Kamu sekarang berada di '),
-	write(X), nl.
-	
-who :- 
-	npc_at(Y,X),
-	write('Di sini ada '),
-	write(Y),
-	write('. Kamu boleh berbicara dengan dia/mereka').
+take(X):-
+	object_at(X,Y),
+	location_now(Y),
+	asserta(inven(X)),
+	write(X),write(' taken'), nl.
 
 talk(X) :-
 	location_now(Y),
@@ -166,54 +217,17 @@ talk(X) :-
 	write('Halo, saya '),
 	write(X), nl,
 	tanya1.
-	
-status :-
-	poin(X),
-	write('Total poinmu sekarang adalah : '), nl,
-	write(X).
-	
-inspect(X):-
-	X==slayer,
-	write('Ini menandakan bahwa kamu calon anggota HMIF. Harus selalu dipakai jika berada di itb'), nl.
-	
-cek_location:-
-	location_now(sekre),
-	quest(dilantik,undone),
-	poin(X),
-	Y is X-1,
-	retract(poin(X)),
-	asserta(poin(Y)),
-	write('BOOM!!!, kamu telah memasuki area steril. Kakak tingkat telah diberitahu.'),nl.
 
-cek(inventory):-
-	findall(X,inven(X),Inventory),
-	write(Inventory).
+tulis_nama_player:-
+	nama_player(X),
+	write(X).	
+
+use(X) :- 
+	inven(X),
+	wear(X).
 	
-tanya1 :-
-	write('siapa kahim hmif: '),
-	read(X), nl,
-	cektanya(X).
-
-cektanya(bimo):- /*pake cektanya1 gimana?._.*/
-	poin(X),
-	Y is X+2,
-	retract(poin(X)),
-	asserta(poin(Y)),
-	write('jawaban benar'),nl,!.
-
-cektanya(_)	:-
-	write('jawaban kamu salah'),nl.
-
-quit :- 
-	write('nama		: '), tulis_nama_player, nl,
-	write('poin		: '), poin(Y), write(Y), nl,
-	write('status quest'), nl, quest(dilantik,A), quest(jadi_ketang,B),
-	write('dilantik	: '), write(A), nl,
-	write('jadi ketang	: '), write(B), nl,
-	retract(nama_player(X)),
-	asserta(nama_player(unnamed)),
-	retract(poin(Y)),
-	asserta(poin(0)),
-	retract(money(Z)),
-	asserta(money(50000)),
-	write('Terima kasih'), nl.
+who :- 
+	location_now(X),
+	npc_at(Y,X),
+	write('Di sini ada '), write(Y), nl,
+	write('Kamu boleh berbicara dengan dia/mereka').
