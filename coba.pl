@@ -4,7 +4,6 @@
 :- dynamic(wear/1).
 :- dynamic(money/1).
 :- dynamic(inven/1).
-:- dynamic(skill/1).
 
 /*Facts*/
 inven(pena).
@@ -76,11 +75,14 @@ take(X):-
 	write(X),write(' taken'), nl.
 	
 drop(X) :- 
+	inven(X),
 	location_now(Y),
 	asserta(object_at(X,Y)),
-	write(X),write('dropped'),nl.
+	write(X),write(' dropped'),nl.
 
-/*use(X) :- */
+use(X) :- 
+	inven(X),
+	wear(X).
 	
 
 tulis_nama_player:-
@@ -194,7 +196,11 @@ cektanya(_)	:-
 	write('jawaban kamu salah'),nl.
 
 quit :- 
-	write('nama'), nl,
+	write('nama		: '), tulis_nama_player, nl,
+	write('poin		: '), poin(Y), write(Y), nl,
+	write('status quest'), nl, quest(dilantik,A), quest(jadi_ketang,B),
+	write('dilantik	: '), write(A), nl,
+	write('jadi ketang	: '), write(B), nl,
 	retract(nama_player(X)),
 	asserta(nama_player(unnamed)),
 	retract(poin(Y)),
