@@ -1,3 +1,4 @@
+/*Alokasi Variabel Dinamik*/
 :- dynamic(poin/1).
 :- dynamic(location_now/1).
 :- dynamic(nama_player/1).
@@ -5,6 +6,7 @@
 :- dynamic(money/1).
 :- dynamic(inven/1).
 
+/*Deklarasi Fakta*/
 inven(pena).
 inven(kertas).
 
@@ -65,6 +67,7 @@ quest(jadi_ketang, undone).
 
 wear(nothing).
 
+/*Deklarasi Rules*/
 take(X):-
 	object_at(X,Y),
 	location_now(Y),
