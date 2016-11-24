@@ -41,6 +41,9 @@ npc(mamet).
 npc(friski).
 npc(begaler).
 
+npc_at(mamet,7602).
+npc_at(begaler,lapangan_sipil).
+npc_at(rezsky,dingdong).
 nama_player(unnamed).
 
 object(slayer).
@@ -121,8 +124,17 @@ down :-
 	write('Berjalan ke bawah......'), nl.
 look :-
 	location_now(X),
+	npc_at(Y,X),
 	write('Kamu sekarang berada di '),
-	write(X), nl.
+	write(X), nl,
+	write('Di sini ada '),
+	write(Y), nl,
+	write('. Kamu boleh berbicara dengan mereka').
+	
+talk(X) :-
+	write('Halo, saya '),
+	write(X),
+	tanya1.
 	
 status :-
 	poin(X),
@@ -151,6 +163,10 @@ tanya1 :-
 	cektanya(X).
 
 cektanya(bimo):- /*pake cektanya1 gimana?._.*/
+	poin(X),
+	Y is X+2,
+	retract(poin(X)),
+	asserta(poin(Y)),
 	write('jawaban benar'),nl,!.
 cektanya(_)	:-
 	write('jawaban kamu salah'),nl.
