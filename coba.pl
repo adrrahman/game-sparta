@@ -88,7 +88,61 @@ cek_location:-
 	Y is X-1,
 	retract(poin(X)),
 	asserta(poin(Y)),
-	write('BOOM!!!, kamu telah memasuki area steril. Kakak tingkat telah diberitahu.'),nl.
+	write('BOOM!!!, kamu telah memasuki area steril. Kakak tingkat telah diberitahu. Terdapat jalan ke kanan untuk menuju 7602'),nl.
+
+cek_location:-
+	location_now(dindong),
+	quest(dilantik,undone),
+	poin(X),
+	Y is X-1,
+	retract(poin(X)),
+	asserta(poin(Y)),
+	write('Kamu berada di selasar labtek V. Apakah kalian sudah kuorum untuk dimobilisasi? Terdapat jalan ke atas menuju basecamp, ke kanan menuju lapangan sipil, ke kiri menuju 7602, dan ke bawah menuju kandang domba'),nl.
+
+cek_location:-
+	location_now(7602),
+	quest(dilantik,undone),
+	poin(X),
+	Y is X-1,
+	retract(poin(X)),
+	asserta(poin(Y)),
+	write('Sudah siap mendapatkan materi? Kamu berada di ruangan 7602 yang berada di lantai 3 labtek V. Terdapat jalan ke kanan menuju dingdong dan ke kiri menuju sekre'),nl.
+
+cek_location:-
+	location_now(kandang_domba),
+	quest(dilantik,undone),
+	poin(X),
+	Y is X-1,
+	retract(poin(X)),
+	asserta(poin(Y)),
+	write('Sudah siap bertemu swasta? Kamu berada di suatu tempat yang gelap, ternyata kandang domba namanya! Terdapat jalan ke atas menuju dingdong'),nl.	
+
+cek_location:-
+	location_now(basecamp),
+	quest(dilantik,undone),
+	poin(X),
+	Y is X-1,
+	retract(poin(X)),
+	asserta(poin(Y)),
+	write('Tugas angkatan? Kamu berada di basecamp ENIGMA. Terdapat jalan ke kanan menuju toko dan ke bawah menuju dingdong'),nl.
+
+cek_location:-
+	location_now(toko),
+	quest(dilantik,undone),
+	poin(X),
+	Y is X-1,
+	retract(poin(X)),
+	asserta(poin(Y)),
+	write('Kehabisan spek? Kamu berada di Toko Spek. Terdapat jalan ke kiri menuju basecamp'),nl.
+
+cek_location:-
+	location_now(lapangan_sipil),
+	quest(dilantik,undone),
+	poin(X),
+	Y is X-1,
+	retract(poin(X)),
+	asserta(poin(Y)),
+	write('Siap mobilisasi? Kamu berada di Lapangan Sipil. Terdapat jalan ke kiri menuju dingdong'),nl.
 
 /*Direction*/
 right :-
@@ -230,4 +284,4 @@ who :-
 	location_now(X),
 	npc_at(Y,X),
 	write('Di sini ada '), write(Y), nl,
-	write('Kamu boleh berbicara dengan dia/mereka').
+write('Kamu boleh berbicara dengan dia/mereka').
