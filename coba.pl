@@ -9,7 +9,8 @@
 
 /*Deklarasi Fakta*/
 /*Dynamic Clause*/
-inven(kosong).
+inven(meja).
+inven(kursi).
 
 location_now(dingdong).
 
@@ -32,10 +33,11 @@ jalan(7602,kiri,sekre).
 jalan(7602,kanan,dingdong).
 jalan(dingdong,kiri,7602).
 jalan(dingdong,kanan,lapangan_sipil).
-jalan(dingdong,atas,basecamp).
-jalan(dingdong,bawah,kandang_domba).
-jalan(kandang_domba,atas,dingdong).
-jalan(basecamp,bawah,dingdong).
+jalan(dingdong,atas,kandang_domba).
+jalan(dingdong,bawah,kosan).
+jalan(kandang_domba,atas,basecamp).
+jalan(kandang_domba,bawah,dingdong).
+jalan(basecamp,bawah,kandang_domba).
 jalan(basecamp,kanan,toko).
 jalan(toko,kiri,basecamp).
 jalan(lapangan_sipil,kiri,dingdong).
@@ -204,10 +206,13 @@ drop(X) :-
 	asserta(object_at(X,Y)),
 	write(X),write(' dropped'),nl.
 
-empty(inven) :-
+empty(inventory,File,NbBarang) :-
 	inven(X),
+	!,
 	retract(inven(X)),
-	empty(inven).	
+	empty(inventory,File,NbBarang).
+empty(inventory,File,NbBarang) :-
+	loadbarang(File,NbBarang).
 
 inspect(X):-
 	X==slayer,
@@ -232,14 +237,14 @@ load :-
 	retract(nama_player(Namalama)),
 	asserta(nama_player(Namabaru)),
 	loadpoin(File).
-	read(File,JumlahBarang),
-	loadbarang(File,JumlahBarang).
 
 loadpoin(File) :-
 	read(File,Poin),
 	poin(X),
 	retract(poin(X)),
-	asserta(poin(Poin)).
+	asserta(poin(Poin)),
+	read(File,NbBarang),
+	empty(inventory,File,NbBarang).
 
 loadbarang(File,A) :-
 	A>0,
@@ -247,8 +252,9 @@ loadbarang(File,A) :-
 	asserta(inven(Barang)),
 	B is A-1,
 	loadbarang(File,B).
+loadbarang(File,0) :-
+	close(File).
 	
-
 look :-
 	location_now(X),
 	write('Kamu sekarang berada di '),
@@ -284,6 +290,23 @@ cektanya1(bimo):- /*pake cektanya1 gimana?._.*/
 
 cektanya1(_) :-
 	write('jawaban kamu salah'),nl.
+
+save :-
+	open('data.txt',write,File),
+	nama_player(X),
+	write(File,X), write(File,'.'), nl(File),
+	poin(P),
+	write(File,P), write(File,'.'), nl(File),
+	findall(A,inven(A),Inventory),
+	length(Inventory,L),
+	write(File,L), write(File,'.'), nl(File),
+	savebarang(Inventory,File).	
+
+savebarang(Inventory,File):-
+	Inventory= [H|Tail],
+	/*write(File,H), write('.'), nl(File),*/
+	write(File,H), write(File,'.'), nl(File),
+	savebarang(Tail,File).
 
 start :-
 	write('Selamat datang di Game Petualangan Sparta'), nl,
