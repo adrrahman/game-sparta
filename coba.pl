@@ -48,10 +48,18 @@ location(sekre).
 location(vib).
 location(kosan).
 
-npc(rezsky).
+npc(korlap).
+npc(danlap_agitasi).
 npc(mamet).
-npc(friski).
+npc(msdm).
 npc(begaler).
+npc(daemon).
+npc(annisa).
+npc(bethea).
+npc(rahman).
+npc(rio).
+npc(ibu_kos).
+npc(penjual).
 
 npc_at(mamet,7602).
 npc_at(begaler,lapangan_sipil).
