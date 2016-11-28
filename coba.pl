@@ -9,6 +9,8 @@
 
 /*Deklarasi Fakta*/
 /*Dynamic Clause*/
+inven(kosong).
+
 location_now(dingdong).
 
 location_quest(7602).
@@ -103,7 +105,17 @@ object_at(sepatu,kosan).
 /*Deklarasi Rules*/
 cek(inventory) :-
 	findall(X,inven(X),Inventory),
+	write('Inventory: '),
 	write(Inventory).
+cek(location) :-
+	location_now(X),
+	write(X).
+cek(nama) :-
+	nama_player(X),
+	write('Nama player: '), write(X),nl.
+cek(poin) :-
+	poin(X),
+	write('Poin: '), write(X).
 
 cek_location:-
 	location_now(sekre),
@@ -216,6 +228,11 @@ drop(X) :-
 	asserta(object_at(X,Y)),
 	write(X),write(' dropped'),nl.
 
+empty(inven) :-
+	inven(X),
+	retract(inven(X)),
+	empty(inven).	
+
 inspect(X):-
 	X==slayer,
 	write('Ini menandakan bahwa kamu calon anggota HMIF. Harus selalu dipakai jika berada di itb'), nl.
@@ -232,6 +249,29 @@ instructions :-
 	write('take					-- mengambil suatu objek'), nl,
 	write('talk					-- berbicara dengan npc'), nl,
 	write('Selamat bersenang-senang! Semoga cepat dilantik, ya!'), nl.
+
+load :-
+	open('data.txt', read, File),
+	read(File,Namabaru),
+	retract(nama_player(Namalama)),
+	asserta(nama_player(Namabaru)),
+	loadpoin(File).
+	read(File,JumlahBarang),
+	loadbarang(File,JumlahBarang).
+
+loadpoin(File) :-
+	read(File,Poin),
+	poin(X),
+	retract(poin(X)),
+	asserta(poin(Poin)).
+
+loadbarang(File,A) :-
+	A>0,
+	read(File,Barang),
+	asserta(inven(Barang)),
+	B is A-1,
+	loadbarang(File,B).
+	
 
 look :-
 	location_now(X),
@@ -296,10 +336,6 @@ talk(X) :-
 	write(X), nl,
 	tanya1.
 
-tulis_nama_player:-
-	nama_player(X),
-	write(X).	
-
 use(X) :- 
 	inven(X),
 	wear(X).
@@ -308,4 +344,4 @@ who :-
 	location_now(X),
 	npc_at(Y,X),
 	write('Di sini ada '), write(Y), nl,
-write('Kamu boleh berbicara dengan dia/mereka').
+	write('Cobalah berbicara dengan dia').
