@@ -181,6 +181,10 @@ cek_location:-
 	retract(poin(X)),
 	asserta(poin(Y)),
 	write('Siap mobilisasi? Kamu berada di Lapangan Sipil. Terdapat jalan ke kiri menuju dingdong'),nl.
+	
+craft(X) :- 
+	syarat_craft(craft(X)),
+	making(X).
 
 /*Direction*/
 right :-
@@ -279,6 +283,17 @@ look :-
 	location_now(X),
 	write('Kamu sekarang berada di '),
 	write(X), nl.
+	
+making(bukang) :-
+	retract(inven(kertas)),
+	retract(inven(lem)),
+	retract(inven(foto)),
+	asserta(inven(bukang)).
+
+making(nametag) :-
+	retract(inven(tali)),
+	retract(inven(kertas)),
+	asserta(inven(nametag)).
 
 quit :- 
 	write('Nama		: '), tulis_nama_player, nl,
@@ -341,6 +356,22 @@ status :-
 	poin(X),
 	write('Total poinmu sekarang adalah : '), nl,
 	write(X).
+	
+syarat_craft(craft(bukang)) :-
+	inven(kertas), 
+	inven(mika), 
+	inven(lem), 
+	inven(foto),!. 
+syarat_craft(craft(bukang)):-
+  	write('Perlengkapan tidak ada untuk membuat bukang'),nl,!,fail.
+syarat_craft(_).
+
+syarat_craft(craft(nametag)) :-
+	inven(tali),
+	inven(kertas),!.
+syarat_craft(craft(nametag)):-
+  	write('Perlengkapan tidak ada untuk membuat nametag'),nl,!,fail.
+syarat_craft(_).
 
 take(X):-
 	object_at(X,Y),
