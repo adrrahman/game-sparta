@@ -11,12 +11,23 @@
 
 /*Deklarasi Fakta*/
 /*Dynamic Clause*/
+inven(meja).
+inven(kursi).
+
+location_now(dingdong).
+
+location_quest(7602).
+
 money(50000).
+
+nama_player(unnamed).
 
 poin(0).
 
 quest(dilantik, undone).
 quest(jadi_ketang, undone).
+
+wear(nothing).
 
 /*Static Clause*/
 jalan(sekre,kanan,7602).
@@ -67,19 +78,19 @@ npc_at(daemon,vib).
 npc_at(ibu_kos,kosan).
 npc_at(danlap_agitasi,kandang_domba). /*npc sementara untuk tes*/
 
-object(slayer).
-object(nametag).
+object(bukang).
+object(foto).
+object(gunting).
+object(jahim).
+object(kertas).
+object(lem).
 object(madurasa).
-object(tolak_angin).
+object(nametag).
 object(ponco).
 object(sepatu).
-object(bukang).
-object(kertas).
-object(gunting).
-object(lem).
-object(foto).
-object(pulpen).
+object(slayer).
 object(tali).
+object(tolak_angin).
 
 object_at(slayer,7602).
 object_at(nametag,7602).
@@ -97,22 +108,19 @@ object_at(sepatu,kosan).
 
 
 /*Deklarasi Rules*/
-check(inventory) :-
+cek(inventory) :-
 	findall(X,inven(X),Inventory),
 	write('Inventory: '),
-	write(Inventory),!.
-check(location) :-
+	write(Inventory).
+cek(location) :-
 	location_now(X),
-	write('Kamu sekarang berada di: '),
-	write(X),!.
-check(name) :-
+	write(X).
+cek(nama) :-
 	nama_player(X),
-	write('Nama player: '), write(X),!.
-check(point) :-
+	write('Nama player: '), write(X),nl.
+cek(poin) :-
 	poin(X),
-	write('Pointmu sekarang: '), write(X),!.
-check(_) :-
-	write('Tidak terdapat command seperti itu'),nl.
+	write('Poin: '), write(X).
 
 cek_location:-
 	location_now(sekre),
@@ -235,23 +243,21 @@ empty(inventory,File,NbBarang) :-
 	loadbarang(File,NbBarang).
 
 inspect(X):-
-	inven(X),
-	X=slayer,
+	X==slayer,
 	write('Ini menandakan bahwa kamu calon anggota HMIF. Harus selalu dipakai jika berada di itb'), nl.
 
 instructions :-
+	tulis_nama_player,
+	write(' adalah seorang Calon Anggota Biasa Himpunan Mahasiswa Informatika'), nl,
+	write('Untuk dilantik, kamu harus memenuhi persyaratan kakak tingkat dengan mengumpulkan poin'), nl,
 	write('Berikut adalah command yang dapat kamu masukkan selama bermain'), nl,
-	write('check()              -- '),
+	write('start					-- memulai permainan'), nl,
+	write('look					-- mengetahui lokasi pemain'), nl,
+	write('status					-- mengetahui poin pemain'), nl,
 	write('right,left,up,down			-- jalan ke kanan, kiri, atas, atau bawah'), nl,
 	write('take					-- mengambil suatu objek'), nl,
 	write('talk					-- berbicara dengan npc'), nl,
 	write('Selamat bersenang-senang! Semoga cepat dilantik, ya!'), nl.
-
-intro:-
-	nama_player(X),
-	write(X),
-	write(' adalah seorang Calon Anggota Biasa Himpunan Mahasiswa Informatika'), nl,
-	write('Untuk dilantik, kamu harus memenuhi persyaratan kakak tingkat dengan mengumpulkan poin'), nl.
 
 load :-
 	open('data.txt', read, File),
@@ -307,6 +313,45 @@ cekquest1 :-
 	write('Misi selesai! selamat!'), nl.
 /*end quest hari pertama*/
 
+/*quest hari terakhir*/
+quest4 :-
+	asserta(location_now(vib)),
+	asserta(location_quest(vib)),
+	write('Kamu telah sampai di VIB!'), nl,
+	write('Jangan harap perjalananmu akan mudah disini'), nl,
+	write('Kontribusimu di SPARTA akan dipertanyakan disini'), nl,
+	quest41.
+
+quest41 :-
+	tanya2.
+
+quest42 :-
+	tanya3.
+
+quest43 :-
+	poin(X),X>=100,
+	write('Selamat poin lantik kamu sudah mencukupi'),nl,
+	write('Silahkan cari pinjaman jahim dan status anggota biasa HMIF akan ada di genggamanmu'),
+	write('Cari seorang kakak tingkat untuk dipinjam jahimnya!'),
+	talkjahim(M).
+
+quest43 :-
+	quest41.
+
+cekquest4 :-
+	location_now(vib),
+	location_quest(vib),
+	inven(bukang),
+	inven(nametag),
+	wear(jahim),
+	wear(slayer),
+	retract(quest(dilantik,undone)),
+	asserta(quest(dilantik,done)),
+	write('Selamat kalian sudah dilantik! Kami tunggu kontribusi kalian di HMIF.'),nl,
+	write('Jaga kekompakan kalian! Jangan lupa sering-sering main ke Sekre ya!'), nl.
+/*end quest hari terakhir*/
+
+
 quit :- 
 	write('Nama		: '), tulis_nama_player, nl,
 	write('Poin		: '), poin(Y), write(Y), nl,
@@ -338,6 +383,40 @@ cektanya1(bimo):- /*pake cektanya1 gimana?._.*/
 cektanya1(_) :-
 	write('jawaban kamu salah'),nl.
 
+tanya2 :-
+	write('berapa jumlah departemen di HMIF?'),
+	read(X), nl,
+	cektanya2(X).
+
+cektanya2(6):- 
+	poin(X),
+	Y is X+2,
+	retract(poin(X)),
+	asserta(poin(Y)),
+	write('jawaban benar'),nl,!.
+	quest42.
+
+cektanya2(_) :-
+	write('jawaban kamu salah'),nl.
+	quest41.
+
+tanya3 :-
+	write('Siapa nama ketang kalian? '),
+	read(X), nl,
+	cektanya3(X).
+
+cektanya3(rahman):- 
+	poin(X),
+	Y is X+2,
+	retract(poin(X)),
+	asserta(poin(Y)),
+	write('jawaban benar'),nl,!.
+	quest43.
+
+cektanya3(_) :-
+	write('jawaban kamu salah'),nl.
+	quest42.
+
 save :-
 	open('data.txt',write,File),
 	nama_player(X),
@@ -359,9 +438,9 @@ start :-
 	write('Selamat datang di Game Petualangan Sparta'), nl,
 	write('Silahkan masukkan namamu (tidak menggunakan huruf kapital): '),
 	read(X),
+	retract(nama_player(Y)),
 	asserta(nama_player(X)),
 	nl,
-	intro,
 	instructions.
 
 status :-
@@ -397,6 +476,24 @@ talk(X) :-
 	write('Halo, saya '),
 	write(X), nl,
 	tanya1.
+
+talkjahim(X) :-
+	location_now(vib),
+	npc_at(X,vib),
+	write('Halo, saya '),
+	write(X), nl,
+	write('Dengar-dengar poinmu sudah mencukupi ya? Apa yang kamu inginkan dari saya?'),nl,
+	read(M),nl,
+	cektalk(M).
+
+cektalk(jahim) :-
+	write('Baik, ini jahim saya.'),nl,
+	asserta(inven(jahim)),
+	write('Jaga baik-baik jahim saya'),
+	cekquest4.
+
+cektalk(_) :-
+	write('Maaf, saya tidak punya.').
 
 use(X) :- 
 	inven(X),
