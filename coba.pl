@@ -184,20 +184,14 @@ cek_location:-
 
 /*Direction*/
 right :-
-
 	location_now(X),
-
 	jalan(X,kanan,Y),
-
 	retract(location_now(X)),
-
 	asserta(location_now(Y)),
-
 	write('Berjalan ke kanan......'), nl,
-
 	look,
-
 	cek_location,!.
+	
 left :-
 	location_now(X),
 	jalan(X,kiri,Y),
@@ -206,6 +200,7 @@ left :-
 	write('Berjalan ke kiri......'), nl,
 	look,
 	cek_location,!.
+	
 up :-
 	location_now(X),
 	jalan(X,atas,Y),
@@ -214,6 +209,7 @@ up :-
 	write('Berjalan ke atas......'), nl,
 	look,
 	cek_location,!.
+	
 down :- 
 	location_now(X),
 	jalan(X,bawah,Y),
