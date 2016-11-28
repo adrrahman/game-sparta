@@ -1,6 +1,7 @@
 /*Alokasi Variabel Dinamik*/
 :- dynamic(poin/1).
 :- dynamic(location_now/1).
+:- dynamic(location_quest/1).
 :- dynamic(nama_player/1).
 :- dynamic(wear/1).
 :- dynamic(money/1).
@@ -42,6 +43,7 @@ jalan(basecamp,bawah,kandang_domba).
 jalan(basecamp,kanan,toko).
 jalan(toko,kiri,basecamp).
 jalan(lapangan_sipil,kiri,dingdong).
+jalan(kosan,atas,dingdong).
 
 location(7602).
 location(lapangan_sipil).
@@ -84,7 +86,7 @@ object(ponco).
 object(sepatu).
 object(bukang).
 object(kertas).
-pbject(gunting).
+object(gunting).
 object(lem).
 object(foto).
 object(pulpen).
@@ -213,7 +215,8 @@ up :-
 	asserta(location_now(Y)),
 	write('Berjalan ke atas......'), nl,
 	look,
-	cek_location,!.
+	cek_location,
+	cekquest1,!.
 	
 down :- 
 	location_now(X),
@@ -295,6 +298,20 @@ making(nametag) :-
 	retract(inven(tali)),
 	retract(inven(kertas)),
 	asserta(inven(nametag)).
+	
+/*quest hari pertama*/
+quest1 :-
+	asserta(location_now(kosan)),
+	asserta(location_quest(basecamp)),
+	write('Kamu telah menerima tugas baru!'), nl,
+	write('Pergilah ke beskem untuk hari ini'), nl,
+	write('Lokasi sekarang: kosan'), nl.
+
+cekquest1 :-
+	location_now(basecamp),
+	location_quest(basecamp),
+	write('Misi selesai! selamat!'), nl.
+/*end quest hari pertama*/
 
 quit :- 
 	write('Nama		: '), tulis_nama_player, nl,
