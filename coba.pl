@@ -11,23 +11,12 @@
 
 /*Deklarasi Fakta*/
 /*Dynamic Clause*/
-inven(meja).
-inven(kursi).
-
-location_now(dingdong).
-
-location_quest(7602).
-
 money(50000).
-
-nama_player(unnamed).
 
 poin(0).
 
 quest(dilantik, undone).
 quest(jadi_ketang, undone).
-
-wear(nothing).
 
 /*Static Clause*/
 jalan(sekre,kanan,7602).
@@ -108,19 +97,22 @@ object_at(sepatu,kosan).
 
 
 /*Deklarasi Rules*/
-cek(inventory) :-
+check(inventory) :-
 	findall(X,inven(X),Inventory),
 	write('Inventory: '),
-	write(Inventory).
-cek(location) :-
+	write(Inventory),!.
+check(location) :-
 	location_now(X),
-	write(X).
-cek(nama) :-
+	write('Kamu sekarang berada di: '),
+	write(X),!.
+check(name) :-
 	nama_player(X),
-	write('Nama player: '), write(X),nl.
-cek(poin) :-
+	write('Nama player: '), write(X),!.
+check(point) :-
 	poin(X),
-	write('Poin: '), write(X).
+	write('Pointmu sekarang: '), write(X),!.
+check(_) :-
+	write('Tidak terdapat command seperti itu'),nl.
 
 cek_location:-
 	location_now(sekre),
@@ -243,21 +235,23 @@ empty(inventory,File,NbBarang) :-
 	loadbarang(File,NbBarang).
 
 inspect(X):-
-	X==slayer,
+	inven(X),
+	X=slayer,
 	write('Ini menandakan bahwa kamu calon anggota HMIF. Harus selalu dipakai jika berada di itb'), nl.
 
 instructions :-
-	tulis_nama_player,
-	write(' adalah seorang Calon Anggota Biasa Himpunan Mahasiswa Informatika'), nl,
-	write('Untuk dilantik, kamu harus memenuhi persyaratan kakak tingkat dengan mengumpulkan poin'), nl,
 	write('Berikut adalah command yang dapat kamu masukkan selama bermain'), nl,
-	write('start					-- memulai permainan'), nl,
-	write('look					-- mengetahui lokasi pemain'), nl,
-	write('status					-- mengetahui poin pemain'), nl,
+	write('check()              -- '),
 	write('right,left,up,down			-- jalan ke kanan, kiri, atas, atau bawah'), nl,
 	write('take					-- mengambil suatu objek'), nl,
 	write('talk					-- berbicara dengan npc'), nl,
 	write('Selamat bersenang-senang! Semoga cepat dilantik, ya!'), nl.
+
+intro:-
+	nama_player(X),
+	write(X),
+	write(' adalah seorang Calon Anggota Biasa Himpunan Mahasiswa Informatika'), nl,
+	write('Untuk dilantik, kamu harus memenuhi persyaratan kakak tingkat dengan mengumpulkan poin'), nl.
 
 load :-
 	open('data.txt', read, File),
@@ -365,9 +359,9 @@ start :-
 	write('Selamat datang di Game Petualangan Sparta'), nl,
 	write('Silahkan masukkan namamu (tidak menggunakan huruf kapital): '),
 	read(X),
-	retract(nama_player(Y)),
 	asserta(nama_player(X)),
 	nl,
+	intro,
 	instructions.
 
 status :-
