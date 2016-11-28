@@ -5,6 +5,7 @@
 :- dynamic(wear/1).
 :- dynamic(money/1).
 :- dynamic(inven/1).
+:- dynamic(object_at/2).
 
 
 /*Deklarasi Fakta*/
