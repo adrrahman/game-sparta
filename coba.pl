@@ -1,33 +1,21 @@
 /*Alokasi Variabel Dinamik*/
 :- dynamic(poin/1).
 :- dynamic(location_now/1).
+:- dynamic(location_quest/1).
 :- dynamic(nama_player/1).
 :- dynamic(wear/1).
 :- dynamic(money/1).
 :- dynamic(inven/1).
-:- dynamic(object_at/2).
 
 
 /*Deklarasi Fakta*/
 /*Dynamic Clause*/
-inven(meja).
-inven(kursi).
-
-location_now(dingdong).
-
-location_quest(7602).
-
 money(50000).
-
-nama_player(unnamed).
 
 poin(0).
 
 quest(dilantik, undone).
 quest(jadi_ketang, undone).
-
-wear(nothing).
-
 /*Static Clause*/
 jalan(sekre,kanan,7602).
 jalan(7602,kiri,sekre).
@@ -42,6 +30,7 @@ jalan(basecamp,bawah,kandang_domba).
 jalan(basecamp,kanan,toko).
 jalan(toko,kiri,basecamp).
 jalan(lapangan_sipil,kiri,dingdong).
+jalan(kosan,atas,dingdong).
 
 location(7602).
 location(lapangan_sipil).
@@ -182,10 +171,6 @@ cek_location:-
 	retract(poin(X)),
 	asserta(poin(Y)),
 	write('Siap mobilisasi? Kamu berada di Lapangan Sipil. Terdapat jalan ke kiri menuju dingdong'),nl.
-	
-craft(X) :- 
-	syarat_craft(craft(X)),
-	making(X).
 
 /*Direction*/
 right :-
@@ -195,7 +180,8 @@ right :-
 	asserta(location_now(Y)),
 	write('Berjalan ke kanan......'), nl,
 	look,
-	cek_location,!.
+	cek_location,
+	cekquest1,!.
 	
 left :-
 	location_now(X),
@@ -204,7 +190,8 @@ left :-
 	asserta(location_now(Y)),
 	write('Berjalan ke kiri......'), nl,
 	look,
-	cek_location,!.
+	cek_location,
+	cekquest1,!.
 	
 up :-
 	location_now(X),
@@ -213,7 +200,8 @@ up :-
 	asserta(location_now(Y)),
 	write('Berjalan ke atas......'), nl,
 	look,
-	cek_location,!.
+	cek_location,
+	cekquest1,!.
 	
 down :- 
 	location_now(X),
@@ -284,17 +272,20 @@ look :-
 	location_now(X),
 	write('Kamu sekarang berada di '),
 	write(X), nl.
-	
-making(bukang) :-
-	retract(inven(kertas)),
-	retract(inven(lem)),
-	retract(inven(foto)),
-	asserta(inven(bukang)).
 
-making(nametag) :-
-	retract(inven(tali)),
-	retract(inven(kertas)),
-	asserta(inven(nametag)).
+/*quest hari pertama*/
+quest1 :-
+	asserta(location_now(kosan)),
+	asserta(location_quest(basecamp)),
+	write('Kamu telah menerima tugas baru!'), nl,
+	write('Pergilah ke beskem untuk hari ini'), nl,
+	write('Lokasi sekarang: kosan'), nl.
+
+cekquest1 :-
+	location_now(basecamp),
+	location_quest(basecamp),
+	write('Misi selesai! selamat!'), nl.
+/*end quest hari pertama*/
 
 quit :- 
 	write('Nama		: '), tulis_nama_player, nl,
@@ -357,22 +348,6 @@ status :-
 	poin(X),
 	write('Total poinmu sekarang adalah : '), nl,
 	write(X).
-	
-syarat_craft(craft(bukang)) :-
-	inven(kertas), 
-	inven(mika), 
-	inven(lem), 
-	inven(foto),!. 
-syarat_craft(craft(bukang)):-
-  	write('Perlengkapan tidak ada untuk membuat bukang'),nl,!,fail.
-syarat_craft(_).
-
-syarat_craft(craft(nametag)) :-
-	inven(tali),
-	inven(kertas),!.
-syarat_craft(craft(nametag)):-
-  	write('Perlengkapan tidak ada untuk membuat nametag'),nl,!,fail.
-syarat_craft(_).
 
 take(X):-
 	object_at(X,Y),
