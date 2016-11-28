@@ -62,14 +62,14 @@ npc(ibu_kos).
 npc(penjual).
 
 npc_at(mamet,7602).
+npc_at(msdm,7602).
 npc_at(begaler,lapangan_sipil).
-npc_at(rezsky,dingdong).
-npc_at(enigma-ers,basecamp).
-npc_at(pedagang,toko).
-npc_at(swasta,sekre).
-npc_at(penjaga,vib).
-npc_at(teman,kosan).
-npc_at(domba,kandang_domba). /*npc sementara untuk tes*/
+npc_at(korlap,dingdong).
+npc_at(penjual,toko).
+npc_at(daemon,sekre).
+npc_at(daemon,vib).
+npc_at(ibu_kos,kosan).
+npc_at(danlap_agitasi,kandang_domba). /*npc sementara untuk tes*/
 
 object(slayer).
 object(nametag).
@@ -79,10 +79,26 @@ object(ponco).
 object(sepatu).
 object(bukang).
 object(kertas).
-object(pena).
+pbject(gunting).
+object(lem).
+object(foto).
+object(pulpen).
+object(tali).
 
 object_at(slayer,7602).
+object_at(nametag,7602).
 object_at(tolak_angin,toko).
+object_at(madurasa,toko).
+object_at(ponco,toko).
+object_at(kertas,toko).
+object_at(gunting,toko).
+object_at(lem,toko).
+object_at(pulpen,toko).
+object_at(tali,toko).
+object_at(foto,basecamp).
+object_at(bukang,basecamp).
+object_at(sepatu,kosan).
+
 
 /*Deklarasi Rules*/
 cek(inventory) :-
