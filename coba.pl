@@ -75,6 +75,7 @@ cek_location:-
 craft(X) :- 
 	syarat_craft(craft(X)),
 	making(X).
+	cekques21,!.
 
 /*Direction*/
 right :-
@@ -209,6 +210,56 @@ quit :-
 	retract(money(Z)),
 	asserta(money(50000)),
 	write('Terima kasih'), nl.
+	
+/*Quest 2*/
+quest21 :-
+	asserta(location_now(basecamp)),
+	asserta(object_at(dompet_rahman,kandang_domba)),
+	retract(npc_at(icha,basecamp)),
+	asserta(npc_at(icha,toko)),
+	retract(money(X)),
+	asserta(money(0)),
+	write('Kamu mendapat tugas untuk membuat Name Tag dan Bukang, akhirnya kamu '), nl,
+	write('pergi ke basecamp. Sesampainya disana ternyata dompetmu ketinggalan '), nl,
+	write('tapi kosanmu jauh, akhirnya kamu akan meminjam uang ke temanmu, untuk'), nl,
+	write('membeli bahan yang dibutuhkan. Coba tanya ke salah satu temanmu...').
+
+cekquest21 :-
+	inven(nametag),
+	inven(bukang),
+	write('Sekarang kamu sudah mempunyai NameTag, benda ini akan membuat kamu terkenal !!! '), nl,
+	write('kamu juga punya bukang, benda ini bisa melipatgandakan teman.'), nl.
+
+npc_talk_quest21(rahman) :-
+	object_at(dompet_rahman,basecamp),
+	location_now(basecamp),
+	money(X),
+	Y is X+1000,
+	retract(money(X)),
+	asserta(money(Y)),
+	write('Makasih banget lho yaa, nih aku kasih 1000, kamu ambil aja kembaliannya.'), nl,!.
+
+npc_talk_quest21(rahman) :-
+	write('Kamu mau pinjam uang ?, Boleh, tapi tolong carikan dompetku, '), nl,
+	write('aku meninggalkannya di suatu tempat...'),nl,!.
+
+npc_talk_quest21(bethea) :-
+	npc_at(icha, basecamp),
+	location_now(basecamp),
+	money(X), 
+	Y is X+10000,
+	retract(money(X)),
+	asserta(money(Y)),
+	write('Siip, makasih ya,, mau pinjam uang cuma 1000 ? nih aku kasih 10000.'),nl,!.
+npc_talk_quest21(bethea) :-
+	write('Panggilin Icha dulu dong supaya ke basecamp!'),nl,!.
+
+npc_talk_quest21(icha) :-
+	retract(npc_at(icha,toko)),
+	asserta(npc_at(icha,basecamp)),
+	asserta(inven(bukang)),
+	write('ok, aku akan ke basecamp'),nl,
+	write('oh iya ini bukangmu, baru diprintin.'),nl,!.
 
 /*Quiz*/
 tanya1 :-
