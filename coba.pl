@@ -19,6 +19,12 @@ quest(dilantik, undone).
 quest(jadi_ketang, undone).
 
 /*Static Clause*/
+harga(tali, 1000).
+harga(kertas, 1000).
+harga(madurasa, 3000).
+harga(tolak_angin, 2000).
+harga(lem, 5000).
+
 jalan(sekre,kanan,7602).
 jalan(7602,kiri,sekre).
 jalan(7602,kanan,dingdong).
@@ -97,6 +103,21 @@ object_at(sepatu,kosan).
 
 
 /*Deklarasi Rules*/
+buy(X) :- 
+	object_at(X,toko),
+	location_now(toko),
+	asserta(inven(X)),
+	harga(X,Y),
+	money(Z),Z >= 0, 
+	A is Z-Y,A >= 0,
+	retract(money(Z)),
+	asserta(money(A)),
+	write(X),write(' telah terbeli dan sudah ditambahkan ke inventory!.'), nl,
+	write('Sisa uang '), write(A), nl,!.
+buy(X):-
+	write('Sisa uang tidak cukup untuk membeli '), write(X), nl,!,fail.
+buy(_).
+
 check(inventory) :-
 	findall(X,inven(X),Inventory),
 	write('Inventory: '),
